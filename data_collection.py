@@ -12,7 +12,7 @@ import re
 
 #### set up token and test
 
-# Authentication
+# Authentication, I should have hide these in the environmental variable, but since this is just a study case, I will leave them here for easy use.
 reddit = praw.Reddit(
     client_id="bOUU3GVPswoqHAeWY-WB5g",
     client_secret="65G2ItcdbqJZU9pmGBC6303fYV-QJg",
@@ -20,7 +20,6 @@ reddit = praw.Reddit(
   #  username=''
 )
 subreddit = reddit.subreddit("python")
-
 
 
 #### collect data
@@ -125,8 +124,10 @@ def source_company_post_to_csv_TOP100(path_to_100, period):
     companies = generate_top_100_company_name(path_to_100)
     data1 = collect_data_reddit(companies[:20], period)
     data2 = collect_data_reddit(companies[20:40], period)
+    time.sleep(300)
     data3 = collect_data_reddit(companies[40:60], period)
     data4 = collect_data_reddit(companies[40:80], period)
+    time.sleep(300)
     data5 = collect_data_reddit(companies[80:100], period)
     data = data1+data2+data3+data4+data5
     save_to_csv_reddit(data,"fetched_post_top_100")
@@ -138,3 +139,61 @@ def source_company_post_to_csv(companies, period, output_path="fetched_post"):
     
     
 
+def update_today_post_top100(previous_post_path, path_to_100):
+    """
+    update with the new post from last update
+    """
+    previous_data = pd.read_csv(previous_post_path, index_col=0)
+    last_date_string = previous_data["Date"].max()
+    last_date_time = datetime.strptime(last_date_string, '%Y-%m-%d')
+    today_time = datetime.today()
+    day_diff = (today_time - last_date_time).days
+    if 1>0:
+        if day_diff <=1:
+            update_period = "day"
+            sleep_time = 60
+            #date_one_days_ago = today_time - timedelta(days=1)
+            # Convert the date back to a string
+            today_time_string = today_time.strftime('%Y-%m-%d')
+            previous_data_correted = previous_data[previous_data['Date']< today_time_string]
+
+        elif day_diff <= 7 and day_diff > 1:
+            update_period = "week"
+            sleep_time = 120
+            # Subtract 7 days
+            date_seven_days_ago = today_time - timedelta(days=7)
+            # Convert the date back to a string
+            date_seven_days_ago_str = date_seven_days_ago.strftime('%Y-%m-%d')
+            previous_data_correted = previous_data[previous_data['Date']< date_seven_days_ago_str]
+
+        elif day_diff>7 and day_diff<=30:
+            update_period = 'month'
+            sleep_time = 300
+            date_30_days_ago = today_time - timedelta(days=30)
+            # Convert the date back to a string
+            date_30_days_ago = date_30_days_ago.strftime('%Y-%m-%d')
+            previous_data_correted = previous_data[previous_data['Date']< date_30_days_ago]
+
+        
+        companies = generate_top_100_company_name(path_to_100)
+        #print('start fetch', update_period)
+        data1 = collect_data_reddit(companies[:20], update_period)
+        data2 = collect_data_reddit(companies[20:40], update_period)
+        #print('fetchign -1', f"sleep at {datetime.today()}")
+        time.sleep(sleep_time)
+        #print("end sleep", f"wakeup at {datetime.today()}")
+        data3 = collect_data_reddit(companies[40:60], update_period)
+        data4 = collect_data_reddit(companies[40:80], update_period)
+        #print('fetchign -2')
+        time.sleep(sleep_time)
+        data5 = collect_data_reddit(companies[80:100], update_period)
+        #print('fetched')
+        data = data1+data2+data3+data4+data5
+        df = pd.DataFrame(data, columns=["Text", "Date", "Company"])
+        df['Text'] = df['Text'].apply(clean_text)
+        df = df.groupby(['Company','Date']).agg({"Text": lambda x: ' '.join(x.astype(str))}).reset_index()
+        df = df[df['Text']!=""]
+
+        data_updated = pd.concat([previous_data_correted, df])
+
+        save_to_csv_reddit(data_updated,"2_fetched_post_top_100_2")

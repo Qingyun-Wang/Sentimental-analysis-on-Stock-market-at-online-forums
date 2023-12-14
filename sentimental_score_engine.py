@@ -42,17 +42,35 @@ def save_score(df, name = "fetched_post_score"):
 
     df.to_csv(save_file_name)
 
+# get the ewme score for the top 100 together
 def create_avg_score_top100_company(path, alpha_value):
     df_100 = get_raw_scored(path)
     df_100_emavg = df_100.groupby('Date')['score'].apply(lambda x: calculate_ema(x, False, alpha_value))
     df_100_emavg.to_csv("data/reddit_fetched_post_top100_avg_score.csv")
 
+# get ewme score for the requested company
 def create_scored_data_history(path, path_to_top_100, history=True, alpha_value=0.3):
     df_100_emavg = pd.read_csv(path_to_top_100, index_col=0)
     df = get_raw_scored(path)
     df_emavg=get_ewm_score(df, df_100_emavg, history, alpha_value=alpha_value)
     save_score(df_emavg)
     return df_emavg
+
+# get the ewme score for each top 100 company
+def create_recommendation_top100(path, path_to_top_100, history=False, alpha_value=0.3):
+    df_100_emavg = pd.read_csv(path_to_top_100, index_col=0)
+    df = get_raw_scored(path)
+    
+    # only consider the score up to last day, since later we will use this score to compare with today's stock price return
+    last_date_string = df["Date"].max()
+    last_date_time = datetime.strptime(last_date_string, '%Y-%m-%d')- timedelta(days=1)
+    last_date_time_str = last_date_time.strftime('%Y-%m-%d')
+    df = df[df['Date']< last_date_time_str]
+
+    df_emavg=get_ewm_score(df, df_100_emavg, history, alpha_value=alpha_value)
+    save_score(df_emavg, name = "fetched_post_top_100_score")
+    return df_emavg
+
 
 #create_avg_score_top100_company('data/reddit_fetched_post_top_100.csv', .3)
 #create_scored_data_history("data/reddit_fetched_post.csv", "data/reddit_fetched_post_top100_avg_score.csv", True)

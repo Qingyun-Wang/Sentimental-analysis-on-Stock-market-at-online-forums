@@ -6,6 +6,8 @@ from alt_plot import *
 
 
 def app(company_list):
+
+
     st.title("Select the company you want to study")
 
 
@@ -32,7 +34,7 @@ def app(company_list):
 
 
     # Button to trigger calculation for selectbox
-    if st.button(f'Get the Sentimental Analysis report for selected company in the last {period_of_interest} !'):
+    if st.button(f'Click for report!'):
         if selected_options and selected_option:
             ##### Data sourcing
             companies = [clean_company_name(com.strip()) for com in companies]
@@ -44,10 +46,21 @@ def app(company_list):
             st.write(chart)        
         else:
             st.write("Please complete the selections")
-
     
-
-
+    st.title(f"Check the correlation between our sentimental score and real stock market movement, updated to {df['Date'].values.max()}")
+    st.markdown(""" 
+                * Red/green represent stock return for the date shown above. 
+                * Blue represent sentimental score for the previous day, such that it will have the predictive power!
+    """)
+    recommendation_chart = plot_recommendation_top_100(path_to_pric="data/top100_companies_data.csv", path_to_sentimental="data/reddit_fetched_post_top_100_score.csv")
+    st.altair_chart(recommendation_chart, use_container_width=True)
+    
+    # Create a button in the sidebar
+    if st.sidebar.button('Click Me to ferch new post for all top-100 company up to date! May take from a few second to 20s minutes to run depending on the number of post'):
+        update_today_post_top100("data/reddit_fetched_post_top_100.csv", "data/top100_companies_data.csv")
+        df = create_scored_data_history("data/reddit_fetched_post.csv", "data/reddit_fetched_post_top100_avg_score.csv", True)
+        st.sidebar.write('Fetched!')
+        
 if __name__ == "__main__":
     #company_list = pd.read_csv("data/top100_name.csv",index_col=0)
     company_list = generate_top_100_company_name("data/top100_companies_data.csv")
