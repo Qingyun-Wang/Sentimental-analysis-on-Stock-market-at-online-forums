@@ -67,6 +67,9 @@ def app(company_list):
         df = create_scored_data_history("data/reddit_fetched_post.csv", "data/reddit_fetched_post_top100_avg_score.csv", True)
         st.sidebar.write('Fetched!')
 
+        recommendation_chart = plot_recommendation_top_100(path_to_pric="data/top100_companies_data.csv", path_to_sentimental="data/reddit_fetched_post_top_100_score.csv")
+        st.altair_chart(recommendation_chart, use_container_width=True)
+
         
 if __name__ == "__main__":
     #company_list = pd.read_csv("data/top100_name.csv",index_col=0)
