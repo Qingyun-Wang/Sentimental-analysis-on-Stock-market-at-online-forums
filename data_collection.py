@@ -7,17 +7,22 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
-import re
+import re, os
 
 nltk.download('wordnet')
+nltk.download('punkt')
 
 #### set up token and test
 
 # Authentication, I should have hide these in the environmental variable, but since this is just a study case, I will leave them here for easy use.
+#client_id = os.getenv("reddit_id")
+#client_secret = os.getenv("client_secret")
+#user_agent = os.getenv("user_agent")
+
 reddit = praw.Reddit(
-    client_id="bOUU3GVPswoqHAeWY-WB5g",
-    client_secret="65G2ItcdbqJZU9pmGBC6303fYV-QJg",
-    user_agent="script:sentimental_analysis:v1.0 (by /u/Legal_Advertising127)"
+    client_id=os.getenv("reddit_id"),
+    client_secret=os.getenv("client_secret"),
+    user_agent=os.getenv("user_agent")
   #  username=''
 )
 subreddit = reddit.subreddit("python")
