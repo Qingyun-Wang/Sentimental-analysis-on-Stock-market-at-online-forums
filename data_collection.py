@@ -9,6 +9,7 @@ from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
 import re
 
+nltk.download('wordnet')
 
 #### set up token and test
 

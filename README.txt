@@ -10,6 +10,6 @@ Instuction:
 2) install and activate a virtual environment using the requirement.txt, for linux/mac: 
     python3 -m venv your_venv_name
     source your_venv_name/bin/activate
-    pip install -r requirement.txt
+    pip install -r requirements.txt
 3) Run the webapp!
     streamlit run app.py
