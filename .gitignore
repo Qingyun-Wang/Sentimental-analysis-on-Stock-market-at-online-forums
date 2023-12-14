@@ -3,3 +3,6 @@ __pycache__/
 capstone.key
 .DS_Store
 main.py
+alt_plot.ipynb
+data_collection.ipynb
+sentimental_score_engine.ipynb
