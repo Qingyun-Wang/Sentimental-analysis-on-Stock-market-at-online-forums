@@ -5,12 +5,10 @@ import pandas as pd
 import time
 import nltk
 from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords, wordnet
-from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
 import re, os
 
-nltk.download('wordnet')
-nltk.download('punkt')
+#nltk.download('punkt')
 
 #### set up token and test
 
@@ -19,12 +17,12 @@ nltk.download('punkt')
 #client_secret = os.getenv("client_secret")
 #user_agent = os.getenv("user_agent")
 
-reddit = praw.Reddit(
-    client_id=os.getenv("reddit_id"),
-    client_secret=os.getenv("client_secret"),
-    user_agent=os.getenv("user_agent")
+reddit = praw.Reddit()
+  #  client_id=os.getenv("reddit_id"),
+  #  client_secret=os.getenv("client_secret"),
+  #  user_agent=os.getenv("user_agent")
   #  username=''
-)
+
 subreddit = reddit.subreddit("python")
 
 
@@ -74,28 +72,22 @@ def collect_data_reddit(companies, effective_preriod):
     return data
 
 
-# Function to get wordnet POS tag
-def get_wordnet_pos(word):
-    """Map POS tag to first character lemmatize() accepts"""
-    tag = nltk.pos_tag([word])[0][1][0].upper()
-    tag_dict = {"J": wordnet.ADJ,
-                "N": wordnet.NOUN,
-                "V": wordnet.VERB,
-                "R": wordnet.ADV}
-    return tag_dict.get(tag, wordnet.NOUN)
-
-
 def clean_text(text):
-    # Initialize the lemmatizer
-    lemmatizer = WordNetLemmatizer()
+
     # Tokenize the text
     tokens = word_tokenize(text)
+
     # Get English stop words
     stop_words = set(stopwords.words('english'))
+
     # Filter out the stop words, non-letter tokens, and lemmatize
-    filtered_text = [lemmatizer.lemmatize(word, get_wordnet_pos(word)) for word in tokens if word.isalpha() and word.lower() not in stop_words]
+    filtered_text = [word for word in tokens if word.isalpha() and word.lower() not in stop_words]
+    #filtered_text = [lemmatizer.lemmatize(word, get_wordnet_pos(word)) for word in tokens if word.lower() not in stop_words]
+
+
     # Rejoin filtered text
     filtered_sentence = ' '.join(filtered_text)
+
     return filtered_sentence
 
 
