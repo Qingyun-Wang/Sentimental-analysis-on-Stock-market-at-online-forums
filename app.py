@@ -7,10 +7,10 @@ from alt_plot import *
 
 def app(company_list):
 
+    st.title("Sentiment Analysis of Major Corporations in the Stock Market Using Online Forum Data")
 
-    st.title("Select the company you want to study")
-
-
+    st.markdown(f"## Select the company you want to study")
+  
     # Create a multiselect dropdown with search capability
     selected_options = st.multiselect(
                                         "Select your companies:",
