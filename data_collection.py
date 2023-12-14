@@ -9,6 +9,7 @@ from nltk.corpus import stopwords
 import re, os
 
 nltk.download('punkt')
+nltk.download('stopwords')
 
 #### set up token and test
 
