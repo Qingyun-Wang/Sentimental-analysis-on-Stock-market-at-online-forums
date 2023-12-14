@@ -36,17 +36,21 @@ def get_ewm_score(df, df_100_emavg, his=False, alpha_value = 0.3):
     
     return df_emavg
 
+
 def save_score(df, name = "fetched_post_score"):
 
     save_file_name = 'data/reddit_'+ name +'.csv'
 
     df.to_csv(save_file_name)
 
+
 # get the ewme score for the top 100 together
 def create_avg_score_top100_company(path, alpha_value):
     df_100 = get_raw_scored(path)
-    df_100_emavg = df_100.groupby('Date')['score'].apply(lambda x: calculate_ema(x, False, alpha_value))
+    df_100_mean = df_100.groupby('Date')['score'].mean()
+    df_100_emavg = df_100_mean.ewm(alpha=alpha_value).mean()
     df_100_emavg.to_csv("data/reddit_fetched_post_top100_avg_score.csv")
+
 
 # get ewme score for the requested company
 def create_scored_data_history(path, path_to_top_100, history=True, alpha_value=0.3):
@@ -70,6 +74,7 @@ def create_recommendation_top100(path, path_to_top_100, history=False, alpha_val
     df_emavg=get_ewm_score(df, df_100_emavg, history, alpha_value=alpha_value)
     save_score(df_emavg, name = "fetched_post_top_100_score")
     return df_emavg
+
 
 
 #create_avg_score_top100_company('data/reddit_fetched_post_top_100.csv', .3)

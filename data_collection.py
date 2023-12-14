@@ -148,7 +148,7 @@ def update_today_post_top100(previous_post_path, path_to_100):
     last_date_time = datetime.strptime(last_date_string, '%Y-%m-%d')
     today_time = datetime.today()
     day_diff = (today_time - last_date_time).days
-    if 1>0:
+    if day_diff>0:
         if day_diff <=1:
             update_period = "day"
             sleep_time = 60
@@ -196,4 +196,4 @@ def update_today_post_top100(previous_post_path, path_to_100):
 
         data_updated = pd.concat([previous_data_correted, df])
 
-        save_to_csv_reddit(data_updated,"2_fetched_post_top_100_2")
+        save_to_csv_reddit(data_updated,"fetched_post_top_100")
