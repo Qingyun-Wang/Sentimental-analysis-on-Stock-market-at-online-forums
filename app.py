@@ -62,7 +62,7 @@ def app(company_list):
     st.altair_chart(recommendation_chart, use_container_width=True)
     
     # Create a button in the sidebar
-    if st.sidebar.button('Click Me to ferch new posts for all top-100 company up to date! May take from less than a second to 20s minutes to run depending on the number of post'):
+    if st.sidebar.button('Click Me to fetch new posts for all top-100 company up to date! May take from less than a second to 20s minutes to run depending on the number of post'):
         update_today_post_top100("data/reddit_fetched_post_top_100.csv", "data/top100_companies_data.csv")
         df = create_scored_data_history("data/reddit_fetched_post.csv", "data/reddit_fetched_post_top100_avg_score.csv", True)
         st.sidebar.write('Fetched!')
