@@ -12,5 +12,5 @@ Instuction for local use:
     python3 -m venv your_venv_name
     source your_venv_name/bin/activate
     pip install -r requirements.txt
-3) Run the webapp!
+3) Run the webapp!{}
     streamlit run app.py
